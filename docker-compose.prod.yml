@@ -8,21 +8,18 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=bank
-    networks:
-      - spring-app-network
+    networks: [spring-app-network]
 
   spring-app:
-    build: .
+    image: ${IMAGE_NAME}:${IMAGE_TAG}   # ← use image from registry
     container_name: spring-app
     restart: unless-stopped
     ports:
-      - "9998:9998"
+      - "9998:9998"                     # ensure this matches the app's internal port
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-    depends_on:
-      - mysql-standalone
-    networks:
-      - spring-app-network
+    depends_on: [mysql-standalone]
+    networks: [spring-app-network]
 
 networks:
   spring-app-network:
