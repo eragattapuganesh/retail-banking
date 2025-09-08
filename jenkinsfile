@@ -1,9 +1,10 @@
-pipeline {
-    agent any
 
-    tools {
-        jdk 'JDK21'             // Configure in Jenkins -> Global Tool Configuration
-        maven 'Maven-3.9.9'     // Configure in Jenkins -> Global Tool Configuration
+pipeline {
+    agent {
+        docker {
+            image 'maven:3.9.9-eclipse-temurin-21'  // Maven + JDK21 preinstalled
+            args '-v /root/.m2:/root/.m2'          // (optional) cache Maven repo
+        }
     }
 
     stages {
@@ -28,7 +29,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "Deploying the application..."
-                // Example: run the jar after build
                 sh '''
                    pkill -f "java -jar" || true
                    nohup java -jar target/*.jar > app.log 2>&1 &
